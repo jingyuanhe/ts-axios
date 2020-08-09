@@ -1,18 +1,28 @@
 import {AxiosReuestConfig, AxiosPromise,AxiosResponse } from './types'
-import { request } from 'http';
 import {parseHeaders} from './helpers/headers'
+import { createError } from './helpers/error'
 export default function xhr(config: AxiosReuestConfig): AxiosPromise {
-    return new Promise((resolve) => {
-          const {data = null, url, method = 'get',headers,responseType} = config;
+    return new Promise((resolve,reject) => {
+          const {data = null, url, method = 'get',headers,responseType, timeout} = config;
     const request = new XMLHttpRequest();
     if(responseType) {
         request.responseType = responseType;
     }
+    if (timeout) {
+        request.timeout = timeout;
+    }
     request.open(method.toUpperCase(), url, true);
+    request.onerror = function handleError () {
+        reject(createError('network Error',config,null,request))
+    }
+    request.ontimeout = function handleTimeOut () {
+        reject(createError(`Timeout od ${timeout} ms exceeded`,config,'ECONNABORTED',request))
+    }
     request.onreadystatechange = function handleLoad () {
         if(request.readyState !==4) {
             return
         }
+        if (request.status === 0) return
         const responseHeaders = parseHeaders(request.getAllResponseHeaders());
         const responseData = responseType !== 'text'?request.response:request.responseText;
         const response: AxiosResponse = {
@@ -23,7 +33,7 @@ export default function xhr(config: AxiosReuestConfig): AxiosPromise {
             config,
             request
         }
-        resolve(response)
+        handleResponse(response)
     }
     Object.keys(headers).forEach(name => {
         if (data === null && name.toLowerCase() === 'content-type') {
@@ -33,6 +43,13 @@ export default function xhr(config: AxiosReuestConfig): AxiosPromise {
         }
     })
     request.send(data);
+    function handleResponse (response: AxiosResponse): void {
+        if (response.status >= 200 && response.status < 300) {
+            resolve(response)
+        } else {
+            reject(createError(`Request failed with status code ${response.status}`,config,null,request,response))
+        }
+    }
     })
   
 }

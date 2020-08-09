@@ -5,7 +5,8 @@ export interface AxiosReuestConfig {
     params?: any;
     data?: any;
     headers?: any
-    responseType?: XMLHttpRequestResponseType
+    responseType?: XMLHttpRequestResponseType,
+    timeout?: number
 }
 export interface AxiosResponse {
     data: any
@@ -17,4 +18,11 @@ export interface AxiosResponse {
 }
 export interface AxiosPromise extends Promise<AxiosResponse> {
     
+}
+export interface AxiosError extends Error {
+    isAxiosError: boolean
+    config:AxiosReuestConfig
+    code?: string | null
+    request?:any
+    response?:AxiosResponse
 }
