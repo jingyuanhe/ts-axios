@@ -1,6 +1,6 @@
-import {AxiosReuestConfig, AxiosPromise,AxiosResponse } from './types'
-import {parseHeaders} from './helpers/headers'
-import { createError } from './helpers/error'
+import {AxiosReuestConfig, AxiosPromise,AxiosResponse } from '../types'
+import {parseHeaders} from '../helpers/headers'
+import { createError } from '../helpers/error'
 export default function xhr(config: AxiosReuestConfig): AxiosPromise {
     return new Promise((resolve,reject) => {
           const {data = null, url, method = 'get',headers,responseType, timeout} = config;

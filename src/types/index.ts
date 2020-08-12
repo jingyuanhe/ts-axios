@@ -1,6 +1,6 @@
-export type Method = 'get' | 'GET' | 'post' | 'POST' | 'delete' | 'DELETE' | 'put' | 'PUT' | 'head' | 'HEAD' | 'options' | 'OPTIONS'
+export type Method = 'get' | 'GET' | 'post' | 'POST' | 'delete' | 'DELETE' | 'put' | 'PUT' | 'head' | 'HEAD' | 'options' | 'OPTIONS' | 'patch' | 'PATCH'
 export interface AxiosReuestConfig {
-    url: string;
+    url?: string;
     method?: Method;
     params?: any;
     data?: any;
@@ -25,4 +25,18 @@ export interface AxiosError extends Error {
     code?: string | null
     request?:any
     response?:AxiosResponse
+}
+export interface Axios {
+    request(config:AxiosReuestConfig): AxiosPromise
+    get(url:string,config?: AxiosReuestConfig): AxiosPromise
+    delete(url:string,config?: AxiosReuestConfig): AxiosPromise
+    head(url:string,config?: AxiosReuestConfig): AxiosPromise
+    options(url:string,config?: AxiosReuestConfig): AxiosPromise
+    post(url:string,data?:any,config?: AxiosReuestConfig): AxiosPromise
+    put(url:string,data?:any,config?: AxiosReuestConfig): AxiosPromise
+    patch(url:string,data?:any,config?: AxiosReuestConfig): AxiosPromise
+}
+export interface AxiosInstance extends Axios{
+    (config:AxiosReuestConfig): AxiosPromise
+    (url:string,config?:AxiosReuestConfig): AxiosPromise
 }
