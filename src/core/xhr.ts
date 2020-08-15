@@ -11,7 +11,7 @@ export default function xhr(config: AxiosReuestConfig): AxiosPromise {
     if (timeout) {
         request.timeout = timeout;
     }
-    request.open(method.toUpperCase(), url, true);
+    request.open(method.toUpperCase(), url!, true);
     request.onerror = function handleError () {
         reject(createError('network Error',config,null,request))
     }

@@ -8,15 +8,15 @@ export interface AxiosReuestConfig {
     responseType?: XMLHttpRequestResponseType,
     timeout?: number
 }
-export interface AxiosResponse {
-    data: any
+export interface AxiosResponse<T=any> {
+    data: T
     status: number
     statusText: string
     headers: any
     config:AxiosReuestConfig
     request: any
 }
-export interface AxiosPromise extends Promise<AxiosResponse> {
+export interface AxiosPromise<T=any> extends Promise<AxiosResponse<T>> {
     
 }
 export interface AxiosError extends Error {
@@ -27,16 +27,30 @@ export interface AxiosError extends Error {
     response?:AxiosResponse
 }
 export interface Axios {
-    request(config:AxiosReuestConfig): AxiosPromise
-    get(url:string,config?: AxiosReuestConfig): AxiosPromise
-    delete(url:string,config?: AxiosReuestConfig): AxiosPromise
-    head(url:string,config?: AxiosReuestConfig): AxiosPromise
-    options(url:string,config?: AxiosReuestConfig): AxiosPromise
-    post(url:string,data?:any,config?: AxiosReuestConfig): AxiosPromise
-    put(url:string,data?:any,config?: AxiosReuestConfig): AxiosPromise
-    patch(url:string,data?:any,config?: AxiosReuestConfig): AxiosPromise
+    interceptors: {
+        request:AxiosInterceptorMangger<AxiosReuestConfig>
+        response:AxiosInterceptorMangger<AxiosResponse>
+    }
+    request<T=any>(config:AxiosReuestConfig): AxiosPromise<T>
+    get<T=any>(url:string,config?: AxiosReuestConfig): AxiosPromise<T>
+    delete<T=any>(url:string,config?: AxiosReuestConfig): AxiosPromise<T>
+    head<T=any>(url:string,config?: AxiosReuestConfig): AxiosPromise<T>
+    options<T=any>(url:string,config?: AxiosReuestConfig): AxiosPromise<T>
+    post<T=any>(url:string,data?:any,config?: AxiosReuestConfig): AxiosPromise<T>
+    put<T=any>(url:string,data?:any,config?: AxiosReuestConfig): AxiosPromise<T>
+    patch<T=any>(url:string,data?:any,config?: AxiosReuestConfig): AxiosPromise<T>
 }
 export interface AxiosInstance extends Axios{
-    (config:AxiosReuestConfig): AxiosPromise
-    (url:string,config?:AxiosReuestConfig): AxiosPromise
+    <T=any>(config:AxiosReuestConfig): AxiosPromise<T>
+    <T=any>(url:string,config?:AxiosReuestConfig): AxiosPromise<T>
+}
+export interface AxiosInterceptorMangger<T>{
+    use(resolved:ResolvedFn<T>,rejected?:RejectedFn):number
+    eject(id:number):void
+}
+export interface ResolvedFn<T>{
+    (val:T):T|Promise<T>
+}
+export interface RejectedFn{
+    (error:any):any
 }
